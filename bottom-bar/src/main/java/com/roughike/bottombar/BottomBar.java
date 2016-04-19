@@ -297,6 +297,36 @@ public class BottomBar extends FrameLayout implements View.OnClickListener, View
     }
 
     /**
+     * Set color tint of the icons when not selected
+     *
+     * @param color
+     */
+    public void setInActiveTabColor(int color) {
+        mInActiveColor = color;
+        updateItemSelectionFilters();
+    }
+
+    private void updateItemSelectionFilters() {
+
+        if (mItemContainer == null) {
+            return;
+        }
+
+        for (int i = 0; i < mItemContainer.getChildCount(); i++) {
+
+            View bottomBarTab = mItemContainer.getChildAt(i);
+            ((ImageView) bottomBarTab.findViewById(R.id.bb_bottom_bar_icon))
+                    .setColorFilter(mInActiveColor);
+
+            if (i == mCurrentTabPosition) {
+                selectTab(bottomBarTab, false);
+            } else {
+                unselectTab(bottomBarTab, false);
+            }
+        }
+    }
+
+    /**
      * Set tabs for this BottomBar. When setting more than 3 items,
      * only the icons will show by default, but the selected item
      * will have the text visible.
@@ -603,8 +633,7 @@ public class BottomBar extends FrameLayout implements View.OnClickListener, View
     }
 
     /**
-     * Set a custom color for an active tab when there's three
-     * or less items.
+     * Set a custom color for an active tab.
      * <p/>
      * NOTE: This value is ignored if you have more than three items.
      *
@@ -1210,7 +1239,7 @@ public class BottomBar extends FrameLayout implements View.OnClickListener, View
                 }
             }
 
-            if (mIsDarkTheme || (!mIsTabletMode && mIsShiftingMode)) {
+            if (mIsDarkTheme) {
                 icon.setColorFilter(mWhiteColor);
             }
 
@@ -1312,14 +1341,10 @@ public class BottomBar extends FrameLayout implements View.OnClickListener, View
 
         int tabPosition = findItemPosition(tab);
 
-        if (!mIsShiftingMode || mIsTabletMode) {
-            int activeColor = mCustomActiveTabColor != 0 ?
-                    mCustomActiveTabColor : mPrimaryColor;
-            icon.setColorFilter(activeColor);
-
-            if (title != null) {
-                title.setTextColor(activeColor);
-            }
+        int activeColor = mCustomActiveTabColor != 0 ? mCustomActiveTabColor : mPrimaryColor;
+        icon.setColorFilter(activeColor);
+        if (title != null) {
+            title.setTextColor(activeColor);
         }
 
         if (mIsDarkTheme) {
@@ -1379,13 +1404,10 @@ public class BottomBar extends FrameLayout implements View.OnClickListener, View
         ImageView icon = (ImageView) tab.findViewById(R.id.bb_bottom_bar_icon);
         TextView title = (TextView) tab.findViewById(R.id.bb_bottom_bar_title);
 
-        if (!mIsShiftingMode || mIsTabletMode) {
-            int inActiveColor = mIsDarkTheme ? mWhiteColor : mInActiveColor;
-            icon.setColorFilter(inActiveColor);
-
-            if (title != null) {
-                title.setTextColor(inActiveColor);
-            }
+        int inActiveColor = mIsDarkTheme ? mWhiteColor : mInActiveColor;
+        icon.setColorFilter(inActiveColor);
+        if (title != null) {
+            title.setTextColor(inActiveColor);
         }
 
         if (mIsDarkTheme) {
